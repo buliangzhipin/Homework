@@ -148,7 +148,7 @@ public class Homework1 {
 				// output_dt•bŒo‰ß‚²‚Æ‚Éoutput_index‚Ì’l‚Íˆê‚Â‚Ã‚Â‘‰Á‚·‚é
 				System.out.println(time);
 				try {
-					PrintWriter pw= new PrintWriter("result_h"+output_index+".csv");
+					PrintWriter pw= new PrintWriter(".\\homework1java\\result_h"+output_index+".csv");
 					for(i =1;i<K-1;i++) {
 						pw.format("%e,", ita[i]);
 					}
