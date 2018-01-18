@@ -1,5 +1,6 @@
 package 環境流体力学;
 
+import java.io.PrintWriter;
 import java.lang.Math;
 
 public class Homework1 {
@@ -41,6 +42,7 @@ public class Homework1 {
 		output_dt = 10; // 途中結果を出力する時間間隔
 		output_time = time + output_dt; // 次に出力すべき時刻
 		double delta = (double) dt / dx;
+		
 
 		// 格子点の作成
 		for (i = 1; i <= K; i++) {
@@ -82,10 +84,12 @@ public class Homework1 {
 		for (i = 1; i <= K; i++) {
 			M[i] = 0.; // 最初は静止
 		}
+		
 
 		// 時間発展の計算開始
 		// nを一つづつ増やして芋づる式に計算する
 		for (n = 1; (n <= n_max) && (time <= time_max); n++) {
+			
 
 			// 水深の計算
 			// 以降はtn->tn+1への計算を書く
@@ -109,6 +113,7 @@ public class Homework1 {
 			}
 			ita[K - 1] = h[K - 1] + b[K - 1];
 			h_new[K - 1] = h_new[K - 2];
+			
 
 			// 値を更新
 			for (i = 1; i <= K - 1; i++) {
@@ -130,6 +135,7 @@ public class Homework1 {
 			for (i = 1; i <= K; i++) {
 				M[i] = M_new[i];
 			}
+			
 
 			// 時間を更新
 			time = time + dt;
@@ -141,6 +147,16 @@ public class Homework1 {
 				// この場所はoutput_dt秒経過ごとに実行される
 				// output_dt秒経過ごとにoutput_indexの値は一つづつ増加する
 				System.out.println(time);
+				try {
+					PrintWriter pw= new PrintWriter("result_h"+output_index+".csv");
+					for(i =1;i<K-1;i++) {
+						pw.format("%e,", ita[i]);
+					}
+					pw.format("%e", ita[K-1]);
+					pw.close();
+				} catch (Exception e) {
+					// TODO: handle exception
+				}
 
 			}
 			// ヒント：ここに出力を書くと良いかも
