@@ -43,6 +43,8 @@ public class Homework1 {
 		output_time = time + output_dt; // Ÿ‚Éo—Í‚·‚×‚«
 		double delta = (double) dt / dx;
 		
+		long startTime = System.currentTimeMillis();  
+		
 
 		// Šiq“_‚Ìì¬
 		for (i = 1; i <= K; i++) {
@@ -92,9 +94,6 @@ public class Homework1 {
 			
 
 			// …[‚ÌŒvZ
-			// ˆÈ~‚Ítn->tn+1‚Ö‚ÌŒvZ‚ğ‘‚­
-			// printf("Now Calculating on WaterLevel:%e->%e\n",time,time+dt);
-			// ‚±‚±‚Éhi+1/2‚ÌŒvZ‚ğ‘‚­
 			// h_new[i]=...
 			h_new[1] = Math.sqrt(g / 2 * (h[2] + h[1])) * delta * (h[2] - h[1]) + h[1];
 			if ((U[1] = (M[1] + M[2]) / 2 / h_new[1]) > 0) {
@@ -103,7 +102,6 @@ public class Homework1 {
 				alpha[1] = -1;
 			}
 			for (i = 2; i < K - 1; i++) {
-				// h_new[i]=h[i]-delta*(M[i+1]-M[i]);
 				if ((U[i] = (M[i] + M[i + 1]) / 2 / (h_new[i] = h[i] - delta * (M[i + 1] - M[i]))) > 0) {
 					alpha[i] = 1;
 				} else {
@@ -122,9 +120,6 @@ public class Homework1 {
 			}
 			// —¬—Ê‚ÌŒvZ
 			// ˆÈ~‚Ítn+1/2->tn+3/2‚Ö‚ÌŒvZ‚ğ‘‚­
-			// printf("Now Calculating on M:%e->%e\n",time+dt/2.,time+dt*3./2.);
-			// ‚±‚±‚ÉMi‚ÌŒvZ‚ğ‘‚­
-			// M_new[i]=...
 			M_new[1] = Math.sqrt(g * h[1]) * delta * (M[2] - M[1]);
 			for (int i1 = 2; i1 < K - 1; i1++) {
 				M_new[i1] = M[i1] - delta / 2 * U[i1] * ((1 + alpha[i1]) * M[i1] + (1 - alpha[i1]) * M[i1 + 1])
@@ -162,6 +157,9 @@ public class Homework1 {
 			// ƒqƒ“ƒgF‚±‚±‚Éo—Í‚ğ‘‚­‚Æ—Ç‚¢‚©‚à
 
 		}
+		long endTime = System.currentTimeMillis();  
+		float seconds = (endTime - startTime) / 1000F;  
+		 System.out.println(Float.toString(seconds) + " seconds."); 
 
 	}
 }

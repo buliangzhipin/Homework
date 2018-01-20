@@ -6,6 +6,7 @@
  */
 #include <stdio.h>
 #include <math.h>
+#include <time.h>
 
 //格子点数
 //h,ita,bなど格子点の中央にある変数はi=1,2,3,...,K-1まで
@@ -26,7 +27,6 @@ int main() {
 	double dx;           //格子点の間隔
 	double g;            //重力加速度
 	double xh;           //計算格子の中間点の座標を一時的に保存
-//  double ha;           //格子点xiにおける水深を一時的に保存
 	double h[K];         //水深 h[i]=hi+1/2  (i=1,2,3,...,K-1)
 	double h_new[K];     //水深の次の時刻の値
 	double ita[K];       //水位 ita[i]=ηi+1/2  (i=1,2,3,...,K-1)
@@ -52,6 +52,9 @@ int main() {
 	output_dt = 10.;            //途中結果を出力する時間間隔
 	output_time = time + output_dt;    //次に出力すべき時刻
 	double delta = dt / dx;
+
+	clock_t start,end;
+	start = clock();
 
 	//格子点の作成
 	for (i = 1; i <= K; i++) {
@@ -94,34 +97,11 @@ int main() {
 		M[i] = 0.; //最初は静止
 	}
 
-	//初期条件をファイルに出力
-	//result_h_00000.datというファイルへ
-	//格子点中央における値(h,ita,b)を出力する
-	sprintf(filename, "result_h_%5.5d.dat", output_index); //filenameという変数に文字を書き込んでいる
-	fp = fopen(filename, "w");
-	for (i = 1; i <= K - 1; i++) {
-		xh = 0.5 * (x[i] + x[i + 1]);
-		fprintf(fp, "%e %e %e %e\n", xh, h[i], ita[i], b[i]);
-	}
-	fclose(fp);
-	//result_M_00000.datというファイルへ
-	//格子点における値(M)を出力する
-	sprintf(filename, "result_M_%5.5d.dat", output_index);
-	fp = fopen(filename, "w");
-	for (i = 1; i <= K; i++) {
-		fprintf(fp, "%e %e\n", x[i], M[i]);
-	}
-	fclose(fp);
-
 	//時間発展の計算開始
 	//nを一つづつ増やして芋づる式に計算する
 	for (n = 1; (n <= n_max) && (time <= time_max); n++) {
 
 		//水深の計算
-		//以降はtn->tn+1への計算を書く
-		//printf("Now Calculating on WaterLevel:%e->%e\n",time,time+dt);
-		//ここにhi+1/2の計算を書く
-		//    h_new[i]=...
 		h_new[1] = sqrt(g / 2 * (h[2] + h[1])) * delta * (h[2] - h[1]) + h[1];
 		if ((U[1] = (M[1] + M[2]) / 2 / h_new[1]) > 0) {
 			alpha[1] = 1;
@@ -129,7 +109,6 @@ int main() {
 			alpha[1] = -1;
 		}
 		for (i = 2; i < K - 1; i++) {
-//    	h_new[i]=h[i]-delta*(M[i+1]-M[i]);
 			if ((U[i] = (M[i] + M[i + 1]) / 2
 					/ (h_new[i] = h[i] - delta * (M[i + 1] - M[i]))) > 0) {
 				alpha[i] = 1;
@@ -149,7 +128,6 @@ int main() {
 
 		//流量の計算
 		//以降はtn+1/2->tn+3/2への計算を書く
-		//printf("Now Calculating on M:%e->%e\n",time+dt/2.,time+dt*3./2.);
 		//ここにMiの計算を書く
 		//    M_new[i]=...
 		M_new[1] = sqrt(g * h[1]) * delta * (M[2] - M[1]);
@@ -184,7 +162,6 @@ int main() {
 			sprintf(filename, "./Homework1C\\result_h_%d.csv", output_index);
 			fp = fopen(filename, "w");
 			for (i = 1; i <= K - 1; i++) {
-//					xh = 0.5 * (x[i] + x[i + 1]);
 				if (i == K - 1) {
 					fprintf(fp, "%e ", ita[i]);
 				} else {
@@ -196,10 +173,29 @@ int main() {
 
 		}
 
-		//ヒント：ここに出力を書くと良いかも
 
 	}
+	end = clock();
+	printf("%.2f秒かかりました\n",(double)(end-start)/CLOCKS_PER_SEC);
 	return 0;
 
 }
 
+////初期条件をファイルに出力
+////result_h_00000.datというファイルへ
+////格子点中央における値(h,ita,b)を出力する
+//sprintf(filename, "result_h_%5.5d.dat", output_index); //filenameという変数に文字を書き込んでいる
+//fp = fopen(filename, "w");
+//for (i = 1; i <= K - 1; i++) {
+//	xh = 0.5 * (x[i] + x[i + 1]);
+//	fprintf(fp, "%e %e %e %e\n", xh, h[i], ita[i], b[i]);
+//}
+//fclose(fp);
+////result_M_00000.datというファイルへ
+////格子点における値(M)を出力する
+//sprintf(filename, "result_M_%5.5d.dat", output_index);
+//fp = fopen(filename, "w");
+//for (i = 1; i <= K; i++) {
+//	fprintf(fp, "%e %e\n", x[i], M[i]);
+//}
+//fclose(fp);
